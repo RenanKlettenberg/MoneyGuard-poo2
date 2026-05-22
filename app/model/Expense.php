@@ -81,8 +81,7 @@ class Expense
             
             FROM "User" u
             JOIN "GroupMember" gm ON u.id_usuario = gm.id_usuario
-            WHERE gm.id_grupo = :id_grupo_e
-        ';
+            WHERE gm.id_grupo = :id_grupo_e';
 
         $stmt = $this->conn->prepare($query);
 

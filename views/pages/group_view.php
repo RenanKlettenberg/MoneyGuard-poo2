@@ -759,7 +759,7 @@ function getCategoryColorClass($categoria)
     }
 
     function openEditModal(id_despesa) {
-        const BASE_URL = "/GitHub/MoneyGuard-poo2/public/";
+        const BASE_URL = "http://localhost/MoneyGuard-poo2/public/";
 
         fetch(BASE_URL + `expense/get_details/${id_despesa}`)
             .then(response => response.json())
