@@ -3,6 +3,11 @@ session_start();
 
 define('BASE_URL', '/MoneyGuard-poo2/public/');
 
+require_once '../vendor/autoload.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->load();
+
 require_once '../app/core/Database.php';
 require_once '../app/controller/User.php';
 require_once '../app/controller/Group.php';

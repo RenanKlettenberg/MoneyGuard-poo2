@@ -9,7 +9,6 @@ require_once '../views/components/auth_header.php';
             <img src="images/logo.svg" alt="MoneyGuard Logo" class="auth-logo">
             <div class="content-register">
                 <form action="register" method="POST" class="auth-form">
-
                     <div class="form-group">
                         <label for="nome">Nome Completo</label>
                         <div class="input-wrapper">

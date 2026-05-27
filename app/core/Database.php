@@ -2,17 +2,23 @@
 
 class Database
 {
-    private $host = 'localhost';
-    private $db_name = 'money_guard';
-    private $username = 'postgres';
-    private $password = '123456';
-    private $port = '5432';
+    private $host;
+    private $db_name;
+    private $username;
+    private $password;
+    private $port;
 
     private $conn;
     private static $instance = null;
 
     private function __construct()
     {
+        $this->host = $_ENV['HOST'];
+        $this->db_name = $_ENV['DB_NAME'];
+        $this->username = $_ENV['USERNAME'];
+        $this->password = $_ENV['PASSWORD'];
+        $this->port = $_ENV['PORT'];
+        
         $dsn = "pgsql:host={$this->host};port={$this->port};dbname={$this->db_name}";
 
         try {

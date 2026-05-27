@@ -103,5 +103,5 @@ require_once '../views/components/auth_header.php';
 </div>
 
 <?php
-require_once '../components/auth_footer.php';
+require_once '../views/components/auth_footer.php';
 ?>
