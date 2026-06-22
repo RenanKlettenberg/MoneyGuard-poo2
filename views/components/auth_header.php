@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bem-vindo ao MoneyGuard</title>
-    <base href="http://localhost/MoneyGuard-poo2/public/">
+    <base href="<?php echo htmlspecialchars(BASE_URL); ?>">
     <link rel="stylesheet" href="css/style.css">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">

@@ -13,11 +13,11 @@ class Database
 
     private function __construct()
     {
-        $this->host = $_ENV['HOST'];
-        $this->db_name = $_ENV['DB_NAME'];
-        $this->username = $_ENV['USERNAME'];
-        $this->password = $_ENV['PASSWORD'];
-        $this->port = $_ENV['PORT'];
+        $this->host = $_ENV['HOST'] ?? getenv('HOST') ?: 'localhost';
+        $this->db_name = $_ENV['DB_NAME'] ?? getenv('DB_NAME') ?: 'moneyguard';
+        $this->username = $_ENV['USERNAME'] ?? getenv('USERNAME') ?: 'moneyguard';
+        $this->password = $_ENV['PASSWORD'] ?? getenv('PASSWORD') ?: 'moneyguard';
+        $this->port = $_ENV['PORT'] ?? getenv('PORT') ?: '5432';
         
         $dsn = "pgsql:host={$this->host};port={$this->port};dbname={$this->db_name}";
 

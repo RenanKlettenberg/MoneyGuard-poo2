@@ -1,0 +1,7 @@
+.git
+.env
+vendor/
+.phpunit.result.cache
+tests/
+public/uploads/recibos/*
+!public/uploads/recibos/.gitkeep

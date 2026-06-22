@@ -1,0 +1,41 @@
+services:
+  app:
+    build: .
+    image: moneyguard-poo2-app:latest
+    container_name: moneyguard-app
+    ports:
+      - "8080:80"
+    environment:
+      HOST: db
+      DB_NAME: moneyguard
+      USERNAME: moneyguard
+      PASSWORD: moneyguard
+      PORT: "5432"
+      BASE_URL: /
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - moneyguard_uploads:/var/www/html/public/uploads
+
+  db:
+    image: postgres:16-alpine
+    container_name: moneyguard-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: moneyguard
+      POSTGRES_USER: moneyguard
+      POSTGRES_PASSWORD: moneyguard
+    volumes:
+      - moneyguard_db_data:/var/lib/postgresql/data
+      - ./sql/BD_money_guard.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U moneyguard -d moneyguard"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  moneyguard_db_data:
+  moneyguard_uploads:

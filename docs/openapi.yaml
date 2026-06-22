@@ -1,0 +1,634 @@
+openapi: 3.0.3
+info:
+  title: MoneyGuard API Contract
+  version: 1.0.0
+  description: >
+    Contrato das rotas HTTP do MoneyGuard. A aplicacao usa sessoes PHP e a maior
+    parte das rotas responde com HTML ou redirecionamentos, pois o sistema e MVC
+    tradicional. As rotas JSON estao documentadas com seus schemas.
+servers:
+  - url: http://localhost:8080
+    description: Ambiente Docker
+  - url: http://localhost/MoneyGuard-poo2/public
+    description: Ambiente local com Apache/XAMPP
+tags:
+  - name: Auth
+  - name: Groups
+  - name: Expenses
+  - name: Settlements
+  - name: Users
+security:
+  - sessionCookie: []
+paths:
+  /login:
+    get:
+      tags: [Auth]
+      summary: Exibe a tela de login.
+      security: []
+      responses:
+        "200":
+          description: Pagina HTML de login.
+          content:
+            text/html:
+              schema:
+                type: string
+    post:
+      tags: [Auth]
+      summary: Autentica um usuario.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "302":
+          description: Redireciona para dashboard quando o login e valido.
+        "200":
+          description: Reexibe HTML de login com mensagem de erro.
+  /logout:
+    get:
+      tags: [Auth]
+      summary: Encerra a sessao atual.
+      responses:
+        "302":
+          description: Redireciona para login.
+  /register:
+    get:
+      tags: [Auth]
+      summary: Exibe a tela de cadastro.
+      security: []
+      responses:
+        "200":
+          description: Pagina HTML de cadastro.
+          content:
+            text/html:
+              schema:
+                type: string
+    post:
+      tags: [Auth]
+      summary: Cadastra um usuario.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "302":
+          description: Redireciona para login quando o cadastro e valido.
+        "200":
+          description: Reexibe HTML de cadastro com mensagem de erro.
+  /dashboard:
+    get:
+      tags: [Groups]
+      summary: Abre o painel do usuario ou redireciona para o ultimo grupo acessado.
+      responses:
+        "200":
+          description: Pagina HTML do dashboard.
+        "302":
+          description: Redireciona para um grupo do usuario ou para login.
+  /groups:
+    get:
+      tags: [Groups]
+      summary: Lista grupos do usuario autenticado.
+      responses:
+        "200":
+          description: Pagina HTML com grupos.
+  /group/create:
+    post:
+      tags: [Groups]
+      summary: Cria um grupo.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [nome_grupo]
+              properties:
+                nome_grupo:
+                  type: string
+                  example: Viagem de formatura
+      responses:
+        "302":
+          description: Redireciona para o grupo criado ou dashboard com erro.
+  /group/view/{id_grupo}:
+    get:
+      tags: [Groups]
+      summary: Exibe detalhes, despesas, membros e saldos de um grupo.
+      parameters:
+        - $ref: "#/components/parameters/IdGrupo"
+        - name: filtro_categoria
+          in: query
+          schema:
+            type: string
+        - name: filtro_pagador
+          in: query
+          schema:
+            type: integer
+        - name: simplify
+          in: query
+          schema:
+            type: integer
+            enum: [1]
+      responses:
+        "200":
+          description: Pagina HTML do grupo.
+        "302":
+          description: Redireciona quando o usuario nao pertence ao grupo.
+  /group/settings/{id_grupo}:
+    get:
+      tags: [Groups]
+      summary: Exibe configuracoes do grupo.
+      parameters:
+        - $ref: "#/components/parameters/IdGrupo"
+      responses:
+        "200":
+          description: Pagina HTML de configuracoes.
+        "302":
+          description: Redireciona quando o usuario nao pertence ao grupo.
+  /group/add_member:
+    post:
+      tags: [Groups]
+      summary: Adiciona membro ao grupo pelo e-mail.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [id_grupo, email]
+              properties:
+                id_grupo:
+                  type: integer
+                email:
+                  type: string
+                  format: email
+      responses:
+        "302":
+          description: Redireciona para o grupo com status ou erro.
+  /group/join_with_code:
+    post:
+      tags: [Groups]
+      summary: Entra em um grupo usando codigo de convite.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [codigo_convite]
+              properties:
+                codigo_convite:
+                  type: string
+                  example: MG-ABC12
+      responses:
+        "302":
+          description: Redireciona para o grupo ou dashboard com erro.
+  /group/generateInviteCode/{id_grupo}:
+    post:
+      tags: [Groups]
+      summary: Gera novo codigo de convite para o grupo.
+      parameters:
+        - $ref: "#/components/parameters/IdGrupo"
+      responses:
+        "200":
+          description: Resultado da geracao do codigo.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InviteCodeResponse"
+  /group/update:
+    post:
+      tags: [Groups]
+      summary: Atualiza o nome do grupo.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [id_grupo, nome_grupo]
+              properties:
+                id_grupo:
+                  type: integer
+                nome_grupo:
+                  type: string
+      responses:
+        "302":
+          description: Redireciona para o grupo com status ou erro.
+  /group/delete:
+    post:
+      tags: [Groups]
+      summary: Remove um grupo.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [id_grupo]
+              properties:
+                id_grupo:
+                  type: integer
+      responses:
+        "302":
+          description: Redireciona para dashboard ou grupo com erro.
+  /group/remove_member:
+    post:
+      tags: [Groups]
+      summary: Remove um membro do grupo.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [id_grupo, id_membro]
+              properties:
+                id_grupo:
+                  type: integer
+                id_membro:
+                  type: integer
+      responses:
+        "302":
+          description: Redireciona para o grupo com status ou erro.
+  /group/report/{id_grupo}:
+    get:
+      tags: [Groups]
+      summary: Exibe relatorio de despesas por categoria e pagador.
+      parameters:
+        - $ref: "#/components/parameters/IdGrupo"
+      responses:
+        "200":
+          description: Pagina HTML de relatorio.
+  /transaction:
+    get:
+      tags: [Settlements]
+      summary: Exibe transacoes simplificadas do ultimo grupo acessado.
+      responses:
+        "200":
+          description: Pagina HTML de transacoes.
+        "302":
+          description: Redireciona para grupos quando nao ha grupo atual.
+  /recent_activities:
+    get:
+      tags: [Groups]
+      summary: Exibe atividades recentes do ultimo grupo acessado.
+      parameters:
+        - name: filtro_categoria
+          in: query
+          schema:
+            type: string
+        - name: filtro_pagador
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Pagina HTML de atividades recentes.
+  /expense/create:
+    post:
+      tags: [Expenses]
+      summary: Cria uma despesa.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/ExpenseForm"
+      responses:
+        "302":
+          description: Redireciona para o grupo com status ou erro.
+  /expense/edit/{id_despesa}:
+    get:
+      tags: [Expenses]
+      summary: Exibe tela de edicao de despesa.
+      parameters:
+        - $ref: "#/components/parameters/IdDespesa"
+      responses:
+        "200":
+          description: Pagina HTML de edicao.
+        "302":
+          description: Redireciona quando o usuario nao pode editar.
+  /expense/get_details/{id_despesa}:
+    get:
+      tags: [Expenses]
+      summary: Retorna detalhes de uma despesa para edicao.
+      parameters:
+        - $ref: "#/components/parameters/IdDespesa"
+      responses:
+        "200":
+          description: Detalhes da despesa ou mensagem de erro.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/ExpenseDetailsResponse"
+                  - $ref: "#/components/schemas/ErrorResponse"
+  /expense/update:
+    post:
+      tags: [Expenses]
+      summary: Atualiza uma despesa.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/ExpenseForm"
+                - type: object
+                  required: [id_despesa]
+                  properties:
+                    id_despesa:
+                      type: integer
+      responses:
+        "302":
+          description: Redireciona para o grupo com status ou erro.
+  /expense/delete:
+    post:
+      tags: [Expenses]
+      summary: Remove uma despesa.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [id_despesa, id_grupo]
+              properties:
+                id_despesa:
+                  type: integer
+                id_grupo:
+                  type: integer
+      responses:
+        "302":
+          description: Redireciona para o grupo com status ou erro.
+  /settlement/create:
+    post:
+      tags: [Settlements]
+      summary: Registra um acerto de pagamento.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/SettlementForm"
+      responses:
+        "302":
+          description: Redireciona para o grupo com status ou erro.
+  /settlement/delete:
+    post:
+      tags: [Settlements]
+      summary: Remove um acerto de pagamento.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [id_acerto, id_grupo]
+              properties:
+                id_acerto:
+                  type: integer
+                id_grupo:
+                  type: integer
+      responses:
+        "302":
+          description: Redireciona para o grupo com status ou erro.
+  /settlement/create_all_my_debts:
+    post:
+      tags: [Settlements]
+      summary: Registra todos os pagamentos devidos pelo usuario no grupo atual.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [id_grupo]
+              properties:
+                id_grupo:
+                  type: integer
+      responses:
+        "302":
+          description: Redireciona para transacoes com status ou erro.
+  /user/update:
+    post:
+      tags: [Users]
+      summary: Atualiza nome, e-mail ou senha do usuario autenticado.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/UserUpdateRequest"
+      responses:
+        "302":
+          description: Redireciona com status ou erro.
+  /user/delete:
+    post:
+      tags: [Users]
+      summary: Remove a conta do usuario autenticado.
+      responses:
+        "302":
+          description: Encerra a sessao e redireciona para login quando removido.
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: PHPSESSID
+  parameters:
+    IdGrupo:
+      name: id_grupo
+      in: path
+      required: true
+      schema:
+        type: integer
+      example: 1
+    IdDespesa:
+      name: id_despesa
+      in: path
+      required: true
+      schema:
+        type: integer
+      example: 10
+  schemas:
+    LoginRequest:
+      type: object
+      required: [email, senha]
+      properties:
+        email:
+          type: string
+          format: email
+          example: maria@email.com
+        senha:
+          type: string
+          format: password
+          example: "123456"
+    RegisterRequest:
+      type: object
+      required: [nome, email, senha, data_nascimento]
+      properties:
+        nome:
+          type: string
+          example: Maria Silva
+        email:
+          type: string
+          format: email
+          example: maria@email.com
+        senha:
+          type: string
+          format: password
+          example: "123456"
+        data_nascimento:
+          type: string
+          format: date
+          example: "2000-05-20"
+    ExpenseForm:
+      type: object
+      required: [id_grupo, id_pagador, valor_total, categoria, descricao, data_despesa]
+      properties:
+        id_grupo:
+          type: integer
+        id_pagador:
+          type: integer
+        valor_total:
+          type: string
+          description: Valor formatado no padrao brasileiro, exemplo R$ 120,50.
+          example: "R$ 120,50"
+        categoria:
+          type: string
+          maxLength: 50
+          example: Mercado
+        descricao:
+          type: string
+          example: Compra do churrasco
+        data_despesa:
+          type: string
+          format: date
+        tipo_divisao:
+          type: string
+          enum: [equitativa, manual]
+          default: equitativa
+        divisao_equitativa:
+          type: array
+          items:
+            type: integer
+          description: IDs dos participantes quando a divisao e equitativa.
+        divisao_manual:
+          type: object
+          additionalProperties:
+            type: string
+          description: Mapa id_usuario -> valor quando a divisao e manual.
+          example:
+            "1": "R$ 60,25"
+            "2": "R$ 60,25"
+        recibo:
+          type: string
+          format: binary
+          description: Imagem JPG, PNG ou GIF com ate 5 MB.
+    SettlementForm:
+      type: object
+      required: [id_grupo, id_credor, valor, data_pagamento]
+      properties:
+        id_grupo:
+          type: integer
+        id_credor:
+          type: integer
+        valor:
+          type: string
+          example: "R$ 45,00"
+        data_pagamento:
+          type: string
+          format: date
+    UserUpdateRequest:
+      oneOf:
+        - type: object
+          required: [type, nome]
+          properties:
+            type:
+              type: string
+              enum: [nome]
+            nome:
+              type: string
+        - type: object
+          required: [type, email]
+          properties:
+            type:
+              type: string
+              enum: [email]
+            email:
+              type: string
+              format: email
+        - type: object
+          required: [type, senha, confirma_senha]
+          properties:
+            type:
+              type: string
+              enum: [senha]
+            senha:
+              type: string
+              format: password
+            confirma_senha:
+              type: string
+              format: password
+    InviteCodeResponse:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+        code:
+          type: string
+          example: MG-ABC12
+        error:
+          type: string
+    ExpenseDetailsResponse:
+      type: object
+      required: [despesa, splits]
+      properties:
+        despesa:
+          $ref: "#/components/schemas/Expense"
+        splits:
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            "1": "60.25"
+            "2": "60.25"
+    Expense:
+      type: object
+      properties:
+        id_despesa:
+          type: integer
+        id_grupo:
+          type: integer
+        id_pagador:
+          type: integer
+        valor_total:
+          type: string
+          example: "120.50"
+        categoria:
+          type: string
+        data_despesa:
+          type: string
+          format: date
+        descricao:
+          type: string
+        url_recibo:
+          type: string
+          nullable: true
+        tipo_divisao:
+          type: string
+          enum: [equitativa, manual]
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
