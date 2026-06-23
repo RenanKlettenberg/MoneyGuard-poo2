@@ -1,0 +1,349 @@
+:root,
+body[data-theme="dark"] {
+    color-scheme: dark;
+    --color-background: #040404;
+    --color-background-panel: #0f0f12;
+    --color-surface: #1c1c1e;
+    --color-surface-alt: #2c2c2e;
+    --color-border: #333333;
+    --color-border-soft: #222222;
+    --color-text: #ffffff;
+    --color-text-secondary: #a0a0a0;
+    --color-primary: #d9a404;
+    --color-primary-hover: #f0b90b;
+    --color-primary-contrast: #040404;
+    --color-muted-control: #555555;
+    --shadow-panel: 0 10px 30px rgba(0, 0, 0, 0.5);
+    --glass-surface: rgba(255, 255, 255, 0.07);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-inset: rgba(255, 255, 255, 0.13);
+    --sidebar-bg-start: #1e1e2a;
+    --sidebar-bg-end: #0e0e15;
+}
+
+body[data-theme="light"] {
+    color-scheme: light;
+    --color-background: #f5f6fa;
+    --color-background-panel: #ffffff;
+    --color-surface: #ffffff;
+    --color-surface-alt: #f0f2f5;
+    --color-border: #d8dde6;
+    --color-border-soft: #e8ebf0;
+    --color-text: #171717;
+    --color-text-secondary: #5f6673;
+    --color-primary: #b98700;
+    --color-primary-hover: #d9a404;
+    --color-primary-contrast: #ffffff;
+    --color-muted-control: #d8dde6;
+    --shadow-panel: 0 10px 30px rgba(20, 24, 31, 0.12);
+    --glass-surface: rgba(255, 255, 255, 0.78);
+    --glass-border: rgba(17, 24, 39, 0.12);
+    --glass-inset: rgba(255, 255, 255, 0.75);
+    --sidebar-bg-start: #ffffff;
+    --sidebar-bg-end: #eef1f6;
+}
+
+body {
+    min-height: 100vh;
+    height: auto;
+    overflow-x: hidden;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+body,
+.modal-content,
+.settings-card,
+.card-dark,
+.list-section,
+.card-options,
+.custom-input,
+.new-modal-input,
+.new-modal-select,
+.input-wrapper,
+.input-wrapper-currency,
+.division-container,
+.new-modal-button-fake {
+    background-color: var(--color-background-panel) !important;
+    color: var(--color-text) !important;
+}
+
+.card-dark,
+.list-section,
+.settings-card,
+.card-options,
+.modal-content,
+.new-modal-input,
+.new-modal-select,
+.input-wrapper-currency,
+.division-container,
+.new-modal-button-fake {
+    border-color: var(--color-border) !important;
+}
+
+.sidebar {
+    background: radial-gradient(ellipse 50% 50% at 50% 50%, var(--sidebar-bg-start) 0%, var(--sidebar-bg-end) 100%);
+    border-color: var(--color-border-soft);
+}
+
+.btn-primary,
+.btn-add,
+.btn-action {
+    background-color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    color: var(--color-primary-contrast) !important;
+}
+
+.btn-primary:hover,
+.btn-add:hover,
+.btn-action:hover {
+    background-color: var(--color-primary-hover) !important;
+}
+
+.btn-manage,
+.transaction-icon,
+.member-avatar-small,
+.btn.disabled {
+    background-color: var(--color-muted-control) !important;
+    color: var(--color-text) !important;
+}
+
+.content-icon,
+.btn-modal,
+.liquid-glass {
+    background: var(--glass-surface) !important;
+    border-color: var(--glass-border) !important;
+    box-shadow: 0 0 4.6px var(--glass-inset) inset !important;
+    outline-color: var(--glass-border) !important;
+}
+
+.modal-overlay {
+    background: rgba(0, 0, 0, 0.58);
+}
+
+body[data-theme="light"] .modal-overlay {
+    background: rgba(17, 24, 39, 0.28);
+}
+
+.card-dark h3,
+.transaction-details .subtitle,
+.custom-input[readonly],
+.input-label,
+.member-role,
+.caption,
+.group-meta,
+.form-link,
+.form-footer-link {
+    color: var(--color-text-secondary) !important;
+}
+
+.transaction-details .title,
+.transaction-amount .total,
+.member-details,
+.member-checkbox-item span,
+.modal-content label,
+#modal-add-expense h3 {
+    color: var(--color-text) !important;
+}
+
+input,
+select,
+textarea,
+button {
+    max-width: 100%;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.inputBtn {
+    flex-wrap: wrap;
+}
+
+.inputBtn .input-wrapper {
+    flex: 1 1 240px;
+}
+
+.inputBtn .btn {
+    flex: 0 0 auto;
+}
+
+.list-section-header,
+.group-header,
+.form-group-division-header {
+    gap: 12px;
+}
+
+@media (max-width: 1024px) {
+    .cards-wrapper {
+        gap: 24px;
+        flex-wrap: wrap;
+    }
+
+    .auth-brand-section {
+        gap: 4rem;
+    }
+
+    .animation-wrapper {
+        width: min(42vw, 320px);
+    }
+}
+
+@media (max-width: 900px) {
+    body {
+        min-height: 100vh;
+    }
+
+    .sidebar {
+        position: static;
+        width: calc(100% - 24px);
+        height: auto;
+        margin: 12px;
+        padding: 1rem;
+        border-radius: 16px;
+    }
+
+    .sidebar.closed {
+        width: 72px;
+        min-height: 72px;
+        padding: 1rem;
+    }
+
+    .sidebar-header {
+        margin-bottom: 1rem;
+    }
+
+    .sidebar.closed .sidebar-header {
+        justify-content: center;
+        margin-bottom: 0;
+    }
+
+    .sidebar.closed .sidebar-nav,
+    .sidebar.closed .sidebar-footer {
+        display: none;
+    }
+
+    .sidebar-nav {
+        flex-direction: row;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 6px;
+    }
+
+    .sidebar-footer {
+        border-top: 1px solid var(--color-border-soft);
+        margin-top: 12px;
+    }
+
+    .sidebar .nav-link,
+    .sidebar.closed .nav-link {
+        min-width: max-content;
+        padding: 10px 14px;
+        gap: 6px;
+    }
+
+    .sidebar .nav-link span,
+    .sidebar.closed .nav-link span {
+        opacity: 1;
+        width: auto;
+        overflow: visible;
+    }
+
+    .sidebar-submenu,
+    .sidebar.closed .sidebar-submenu {
+        display: none;
+    }
+
+    .main-content-wrapper,
+    .sidebar.closed + .main-content-wrapper {
+        margin-left: 0;
+        padding: 16px;
+        min-height: auto;
+        height: auto;
+    }
+
+    header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .list-section-header,
+    .form-group-flex,
+    .form-row,
+    .card-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .summary-cards,
+    .cards-wrapper {
+        flex-direction: column;
+    }
+
+    .card-dark,
+    .list-section,
+    .settings-card {
+        padding: 18px;
+    }
+
+    .transaction-item,
+    .member-item,
+    .transfer-item {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .transaction-amount,
+    .member-balance {
+        text-align: left;
+    }
+}
+
+@media (max-width: 640px) {
+    .main-content-wrapper {
+        padding: 12px;
+    }
+
+    .content-login,
+    .content-register {
+        width: 100%;
+    }
+
+    .auth-logo {
+        width: 190px;
+    }
+
+    .auth-form-section {
+        padding: 1rem;
+    }
+
+    .modal-content {
+        width: calc(100% - 24px) !important;
+        padding: 1.25rem !important;
+        margin: 12px auto;
+        max-height: calc(100vh - 24px);
+        overflow-y: auto;
+    }
+
+    .inputBtn .btn,
+    .btn-action,
+    .btn-outline,
+    .btn-add {
+        width: 100%;
+        text-align: center;
+    }
+
+    .member-card {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .group-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

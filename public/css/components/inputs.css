@@ -28,7 +28,7 @@
 }
 
 .input-wrapper input::placeholder {
-    color: var(--color-text-secundary);
+    color: var(--color-text-secondary);
     opacity: 1;
 }
 
@@ -68,5 +68,5 @@ input[type="date"] {
 }
 
 input[type="date"] {
-    color-scheme: dark;
+    color-scheme: inherit;
 }

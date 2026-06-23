@@ -54,7 +54,7 @@ require_once '../views/components/auth_header.php';
                     <?php if (isset($_GET['status']) && $_GET['status'] == 'success'): ?>
                         <div class="alert alert-success">
                             <i class="fa-solid fa-check"></i>
-                            Usuário cadastrado com sucesso! Faça o login. (MSG08)
+                            Usuário cadastrado com sucesso! Faça o login.
                         </div>
                     <?php endif; ?>
                 </div>

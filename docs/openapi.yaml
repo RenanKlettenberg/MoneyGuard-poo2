@@ -577,6 +577,18 @@ components:
             confirma_senha:
               type: string
               format: password
+        - type: object
+          required: [type, tema]
+          properties:
+            type:
+              type: string
+              enum: [tema]
+            tema:
+              type: string
+              enum: [dark, light]
+            redirect_to:
+              type: string
+              example: group/settings/1
     InviteCodeResponse:
       type: object
       required: [success]

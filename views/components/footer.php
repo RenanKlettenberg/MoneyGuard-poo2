@@ -1,7 +1,7 @@
 </main>
 <hr>
 <footer>
-    <p>&copy; 2025 MoneyGuard</p>
+    <p>&copy; MoneyGuard</p>
 </footer>
 
 </div>

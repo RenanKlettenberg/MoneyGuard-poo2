@@ -13,7 +13,7 @@ class UserController
             $senha = $_POST['senha'];
 
             if (empty($email) || empty($senha)) {
-                $error = "E-mail e senha são obrigatórios.";
+                $error = "E-mail e senha sao obrigatorios.";
                 require_once '../views/pages/login.php';
                 return;
             }
@@ -29,6 +29,7 @@ class UserController
                 $_SESSION['user_name'] = $result['nome'];
                 $_SESSION['user_email'] = $result['email'];
                 $_SESSION['ultimo_grupo_acessado_id'] = $result['ultimo_grupo_acessado_id'];
+                $_SESSION['user_theme'] = $result['tema'] ?? 'dark';
 
                 header("Location: dashboard");
                 exit;
@@ -61,7 +62,7 @@ class UserController
             $senha = $_POST['senha'];
             $data_nascimento = $_POST['data_nascimento'];
             if (empty($nome) || empty($email) || empty($senha) || empty($data_nascimento)) {
-                $error = "Todos os campos são obrigatórios.";
+                $error = "Todos os campos sao obrigatorios.";
                 require_once '../views/pages/register.php';
                 return;
             }
@@ -133,6 +134,7 @@ class UserController
         $id_usuario = $_SESSION['user_id'];
         $tipo = $_POST['type'];
         $data = [];
+        $redirect = $this->getSafeRedirect();
 
         if ($tipo === 'nome') {
             $data['nome'] = $_POST['nome'];
@@ -144,16 +146,26 @@ class UserController
             if ($_POST['senha'] === $_POST['confirma_senha']) {
                 $data['senha'] = $_POST['senha'];
             } else {
-                header("Location: " . BASE_URL . "settings?error=" . urlencode("As senhas não coincidem."));
+                header("Location: " . $redirect . "?error=" . urlencode("As senhas nao coincidem."));
                 exit;
             }
+        } elseif ($tipo === 'tema') {
+            $tema = $_POST['tema'] ?? 'dark';
+
+            if (!in_array($tema, ['dark', 'light'], true)) {
+                $tema = 'dark';
+            }
+
+            $data['tema'] = $tema;
+            $_SESSION['user_theme'] = $tema;
         }
 
         $userModel = new User(Database::getInstance()->getConnection());
         if ($userModel->update($id_usuario, $data)) {
-            header("Location: " . BASE_URL . "settings?status=updated");
+            $status = $tipo === 'tema' ? 'theme_updated' : 'updated';
+            header("Location: " . $redirect . "?status=" . $status);
         } else {
-            header("Location: " . BASE_URL . "settings?error=update_failed");
+            header("Location: " . $redirect . "?error=update_failed");
         }
         exit;
     }
@@ -173,6 +185,17 @@ class UserController
             header("Location: " . BASE_URL . "settings?error=delete_failed");
         }
         exit;
+    }
+
+    private function getSafeRedirect()
+    {
+        $redirectTo = $_POST['redirect_to'] ?? 'settings';
+
+        if (!preg_match('/^[a-zA-Z0-9\/_-]+$/', $redirectTo)) {
+            $redirectTo = 'dashboard';
+        }
+
+        return BASE_URL . ltrim($redirectTo, '/');
     }
 }
 ?>

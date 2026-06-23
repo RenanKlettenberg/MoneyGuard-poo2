@@ -6,7 +6,8 @@ CREATE TABLE "User" (
     "nome" VARCHAR(255) NOT NULL,
     "email" VARCHAR(255) UNIQUE NOT NULL,
     "senha_hash" VARCHAR(255) NOT NULL,
-    "data_nascimento" DATE
+    "data_nascimento" DATE,
+    "tema" VARCHAR(10) NOT NULL DEFAULT 'dark' CHECK ("tema" IN ('dark', 'light'))
 );
 
 -- Tabela Group (ED02)

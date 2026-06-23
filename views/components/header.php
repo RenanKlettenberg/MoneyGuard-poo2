@@ -1,6 +1,11 @@
 <?php
 
 $user_name = $_SESSION['user_name'];
+$theme = $_SESSION['user_theme'] ?? 'dark';
+
+if (!in_array($theme, ['dark', 'light'], true)) {
+    $theme = 'dark';
+}
 
 require_once '../app/core/Database.php';
 require_once '../app/model/Group.php';
@@ -66,7 +71,7 @@ $exibir_header = !in_array($current_url, $rotas_sem_header) && !str_starts_with(
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
-<body>
+<body data-theme="<?php echo htmlspecialchars($theme); ?>">
     <?php
     require_once '../views/components/sidebar.php'
         ?>

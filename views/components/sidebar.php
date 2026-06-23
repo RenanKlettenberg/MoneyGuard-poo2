@@ -2,6 +2,11 @@
 $current_url = $_GET['url'] ?? 'dashboard';
 
 $is_group_page = str_starts_with($current_url, 'group/') || $current_url == 'groups';
+$settings_grupo_id = $_SESSION['ultimo_grupo_acessado_id'] ?? null;
+
+if (!$settings_grupo_id && !empty($sidebar_grupos)) {
+    $settings_grupo_id = $sidebar_grupos[0]['id_grupo'];
+}
 ?>
 
 <aside class="sidebar" id="sidebar">
@@ -22,7 +27,7 @@ $is_group_page = str_starts_with($current_url, 'group/') || $current_url == 'gro
         <a href="transaction" class="nav-link <?php if ($current_url == 'transaction')
             echo 'active'; ?>">
             <i class="bi bi-cash-coin"></i>
-            <span>Transação</span>
+            <span>Transacao</span>
         </a>
         <a href="recent_activities" class="nav-link <?php if ($current_url == 'recent_activities')
             echo 'active'; ?>">
@@ -59,11 +64,13 @@ $is_group_page = str_starts_with($current_url, 'group/') || $current_url == 'gro
             </a>
         </div>
 
-        <a href="group/settings/<?php echo $sidebar_grupo['id_grupo'] ?>" class="nav-link <?php if ($current_url == 'group/settings/')
-            echo 'active'; ?>">
-            <i class="bi bi-gear-fill"></i>
-            <span>Configuração</span>
-        </a>
+        <?php if ($settings_grupo_id): ?>
+            <a href="group/settings/<?php echo $settings_grupo_id; ?>" class="nav-link <?php if (str_starts_with($current_url, 'group/settings/'))
+                echo 'active'; ?>">
+                <i class="bi bi-gear-fill"></i>
+                <span>Configuracao</span>
+            </a>
+        <?php endif; ?>
     </nav>
 
     <div class="sidebar-footer">

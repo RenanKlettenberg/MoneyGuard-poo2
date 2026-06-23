@@ -1,6 +1,12 @@
 <?php
 require_once '../views/components/header.php';
 
+$currentTheme = $_SESSION['user_theme'] ?? 'dark';
+
+if (!in_array($currentTheme, ['dark', 'light'], true)) {
+    $currentTheme = 'dark';
+}
+
 ?>
 <style>
     .config-container {
@@ -11,28 +17,29 @@ require_once '../views/components/header.php';
 
     .config-title {
         font-size: 1.5rem;
-        color: #fff;
+        color: var(--color-text);
         margin-bottom: 1.5rem;
         font-weight: 500;
     }
 
     .settings-card {
-        background: #0f0f12;
-        border: 1px solid #222;
+        background: var(--color-background-panel);
+        border: 1px solid var(--color-border-soft);
         border-radius: 20px;
         padding: 40px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        box-shadow: var(--shadow-panel);
+        margin-bottom: 24px;
     }
 
     .section-label {
-        color: #fff;
+        color: var(--color-text);
         font-size: 1.1rem;
         margin-bottom: 1rem;
         display: block;
     }
 
     .input-label {
-        color: #888;
+        color: var(--color-text-secondary);
         font-size: 0.9rem;
         margin-bottom: 0.5rem;
         display: block;
@@ -40,9 +47,9 @@ require_once '../views/components/header.php';
 
     .custom-input {
         width: 100%;
-        background-color: #050507;
-        border: 1px solid #333;
-        color: #fff;
+        background-color: var(--color-background);
+        border: 1px solid var(--color-border);
+        color: var(--color-text);
         padding: 12px 20px;
         border-radius: 50px; 
         font-size: 1rem;
@@ -55,13 +62,13 @@ require_once '../views/components/header.php';
     }
 
     .custom-input[readonly] {
-        color: #aaa;
+        color: var(--color-text-secondary);
         cursor: default;
     }
 
     .btn-action {
         background-color: var(--color-primary);
-        color: #000;
+        color: var(--color-primary-contrast);
         border: none;
         border-radius: 50px;
         padding: 10px 30px;
@@ -113,7 +120,7 @@ require_once '../views/components/header.php';
         align-items: center;
         justify-content: space-between;
         padding: 10px 0;
-        border-bottom: 1px solid #222;
+        border-bottom: 1px solid var(--color-border-soft);
     }
     
     .member-card:last-child {
@@ -130,12 +137,12 @@ require_once '../views/components/header.php';
         width: 50px;
         height: 50px;
         border-radius: 50%;
-        background-color: #222;
+        background-color: var(--color-surface-alt);
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: bold;
-        color: #fff;
+        color: var(--color-text);
         overflow: hidden;
     }
     
@@ -148,7 +155,7 @@ require_once '../views/components/header.php';
     .member-text h4 {
         margin: 0;
         font-size: 1rem;
-        color: #fff;
+        color: var(--color-text);
         font-weight: normal;
     }
 
@@ -176,11 +183,100 @@ require_once '../views/components/header.php';
         display: flex;
         justify-content: flex-end;
         gap: 15px;
-        border-top: 1px solid #222;
+        border-top: 1px solid var(--color-border-soft);
         padding-top: 30px;
     }
 
+    .appearance-card {
+        padding: 28px;
+    }
+
+    .theme-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .theme-options {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .theme-choice {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        border: 1px solid var(--color-border);
+        border-radius: 16px;
+        padding: 16px;
+        color: var(--color-text);
+        cursor: pointer;
+        background: var(--color-surface);
+        transition: border-color 0.2s, transform 0.2s, background-color 0.2s;
+    }
+
+    .theme-choice:hover,
+    .theme-choice.is-selected {
+        border-color: var(--color-primary);
+        transform: translateY(-1px);
+    }
+
+    .theme-choice input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .theme-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--color-surface-alt);
+        color: var(--color-primary);
+        flex: 0 0 auto;
+        padding-left: 0 !important;
+    }
+
+    .theme-icon i {
+        width: auto;
+        height: auto;
+        line-height: 1;
+        margin: 0;
+        padding-left: 0 !important;
+        text-align: center;
+    }
+
+    .theme-copy {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding-left: 0 !important;
+    }
+
+    .theme-copy strong {
+        font-size: 1rem;
+        color: var(--color-text);
+    }
+
+    .theme-copy span {
+        color: var(--color-text-secondary);
+        font-size: 0.9rem;
+        padding-left: 0;
+    }
+
     @media (max-width: 768px) {
+        .settings-card,
+        .appearance-card {
+            padding: 22px;
+        }
+        .theme-options {
+            grid-template-columns: 1fr;
+        }
         .form-row {
             flex-direction: column;
             align-items: stretch;
@@ -218,6 +314,42 @@ require_once '../views/components/header.php';
                 <i class="fa-solid fa-check"></i> Grupo atualizado com sucesso!
             </div>
         <?php endif; ?>
+        <?php if (isset($_GET['status']) && $_GET['status'] == 'theme_updated'): ?>
+            <div class="alert alert-success">
+                <i class="fa-solid fa-check"></i> Tema atualizado com sucesso!
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <div class="settings-card appearance-card">
+        <h3 class="section-label">Aparencia</h3>
+
+        <form class="theme-form" action="<?php echo BASE_URL; ?>user/update" method="POST">
+            <input type="hidden" name="type" value="tema">
+            <input type="hidden" name="redirect_to" value="group/settings/<?php echo $grupo['id_grupo']; ?>">
+
+            <div class="theme-options" role="radiogroup" aria-label="Escolha do tema">
+                <label class="theme-choice <?php echo $currentTheme === 'dark' ? 'is-selected' : ''; ?>">
+                    <input type="radio" name="tema" value="dark" <?php echo $currentTheme === 'dark' ? 'checked' : ''; ?>
+                           onchange="this.form.submit()">
+                    <span class="theme-icon"><i class="bi bi-moon-stars-fill"></i></span>
+                    <span class="theme-copy">
+                        <strong>Dark Mode</strong>
+                        <span>Interface escura para usar com menos brilho.</span>
+                    </span>
+                </label>
+
+                <label class="theme-choice <?php echo $currentTheme === 'light' ? 'is-selected' : ''; ?>">
+                    <input type="radio" name="tema" value="light" <?php echo $currentTheme === 'light' ? 'checked' : ''; ?>
+                           onchange="this.form.submit()">
+                    <span class="theme-icon"><i class="bi bi-sun-fill"></i></span>
+                    <span class="theme-copy">
+                        <strong>Light Mode</strong>
+                        <span>Interface clara para ambientes iluminados.</span>
+                    </span>
+                </label>
+            </div>
+        </form>
     </div>
 
     <div class="settings-card">

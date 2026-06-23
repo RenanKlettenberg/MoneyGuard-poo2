@@ -116,6 +116,10 @@ class User
             $fields[] = 'senha_hash = :senha';
             $params['senha'] = password_hash($data['senha'], PASSWORD_DEFAULT);
         }
+        if (isset($data['tema'])) {
+            $fields[] = 'tema = :tema';
+            $params['tema'] = $data['tema'];
+        }
 
         if (empty($fields))
             return false;

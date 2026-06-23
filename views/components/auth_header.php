@@ -1,3 +1,10 @@
+<?php
+$theme = $_SESSION['user_theme'] ?? 'dark';
+
+if (!in_array($theme, ['dark', 'light'], true)) {
+    $theme = 'dark';
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -18,5 +25,5 @@
 
 </head>
 
-<body class="auth-body">
+<body class="auth-body" data-theme="<?php echo htmlspecialchars($theme); ?>">
     <main></main>
