@@ -19,7 +19,9 @@ class User
                 return "Credenciais de login inválidas.";
             }
 
-            if (password_verify($senha, $user['senha_hash'])) {
+            $senha = hash_hmac('sha256', $senha, $_ENV['SECRET']);
+
+            if ($senha === $user['senha_hash']) {
                 unset($user['senha_hash']);
                 return $user;
             } else {
@@ -38,7 +40,7 @@ class User
                 return "E-mail já cadastrado."; // (MSG24)
             }
 
-            $senha_hash = password_hash($senha, PASSWORD_BCRYPT);
+            $senha_hash = hash_hmac('sha256', $senha, $_ENV['SECRET']);
 
             $query = "INSERT INTO " . $this->table . " (nome, email, senha_hash, data_nascimento)
                       VALUES (:nome, :email, :senha_hash, :data_nasc)
@@ -114,7 +116,7 @@ class User
         }
         if (!empty($data['senha'])) {
             $fields[] = 'senha_hash = :senha';
-            $params['senha'] = password_hash($data['senha'], PASSWORD_DEFAULT);
+            $params['senha'] = hash_hmac('sha256', $data['senha'], $_ENV['SECRET']);
         }
         if (isset($data['tema'])) {
             $fields[] = 'tema = :tema';
